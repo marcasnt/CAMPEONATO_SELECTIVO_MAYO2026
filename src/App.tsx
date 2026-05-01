@@ -28,7 +28,7 @@ style.textContent = `
     100% { background-position: 200% 0; }
   }
   @keyframes pulse-ring {
-    0% { transform: scale(1); opacity: 1; }
+    0%, 100% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.1); opacity: 0.5; }
     100% { transform: scale(1); opacity: 1; }
   }
@@ -48,31 +48,39 @@ style.textContent = `
     0%, 100% { border-color: rgba(245, 222, 179, 0.3); }
     50% { border-color: rgba(245, 222, 179, 0.8); }
   }
-  .animate-float-glow { animation: float-glow 3s ease-in-out infinite; }
-  .animate-shimmer { background: linear-gradient(90deg, transparent 0%, rgba(245,222,179,0.1) 50%, transparent 100%); background-size: 200% 100%; animation: shimmer 2s linear infinite; }
-  .animate-pulse-ring { animation: pulse-ring 2s ease-in-out infinite; }
+  @keyframes logo-glow-slow {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(245,222,179,0.4)); }
+    50% { filter: drop-shadow(0 0 25px rgba(245,222,179,0.7)); }
+  }
+  @keyframes shimmer-slow {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  @keyframes pulse-slow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .animate-float-glow { animation: float-glow 4s ease-in-out infinite; }
+  .animate-shimmer { background: linear-gradient(90deg, transparent 0%, rgba(245,222,179,0.1) 50%, transparent 100%); background-size: 200% 100%; animation: shimmer-slow 4s linear infinite; }
+  .animate-pulse-ring { animation: pulse-ring 3s ease-in-out infinite; }
   .animate-slide-up { animation: slide-up-fade 0.5s ease-out forwards; }
   .animate-fade-scale { animation: fade-in-scale 0.4s ease-out forwards; }
-  .animate-bounce-subtle { animation: bounce-subtle 2s ease-in-out infinite; }
+  .animate-bounce-subtle { animation: bounce-subtle 3s ease-in-out infinite; }
+  .animate-logo-glow { animation: logo-glow-slow 6s ease-in-out infinite; }
+  .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
   .input-focus-glow:focus { box-shadow: 0 0 0 3px rgba(245, 222, 179, 0.3), 0 0 20px rgba(245, 222, 179, 0.1); }
   .btn-hover-glow:hover { box-shadow: 0 0 30px rgba(245, 222, 179, 0.4); transform: translateY(-2px); }
   .btn-hover-scale:hover { transform: scale(1.02); }
   .checkbox-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-  .step-entrance { animation: slide-up-fade 0.6s ease-out forwards; opacity: 0; }
+  .step_entrance { animation: slide-up-fade 0.6s ease-out forwards; opacity: 0; }
   .stagger-1 { animation-delay: 0.1s; }
   .stagger-2 { animation-delay: 0.2s; }
   .stagger-3 { animation-delay: 0.3s; }
   .stagger-4 { animation-delay: 0.4s; }
   .stagger-5 { animation-delay: 0.5s; }
-  .progress-line-glow { background: linear-gradient(90deg, transparent, #f5deb3, transparent); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+  .progress-line-glow { background: linear-gradient(90deg, transparent, #f5deb3, transparent); background-size: 200% 100%; animation: shimmer-slow 5s ease-in-out infinite; }
   .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
   .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
-  @keyframes rotate-glow {
-    0% { filter: drop-shadow(0 0 5px rgba(245,222,179,0.5)); }
-    50% { filter: drop-shadow(0 0 20px rgba(245,222,179,0.8)); }
-    100% { filter: drop-shadow(0 0 5px rgba(245,222,179,0.5)); }
-  }
-  .logo-glow { animation: rotate-glow 4s ease-in-out infinite; }
 `;
 document.head.appendChild(style);
 
@@ -432,12 +440,12 @@ export default function App() {
 
         <div className="relative inline-flex justify-center w-full mb-6 sm:mb-8 animate-fade-scale">
           <div className="absolute inset-0 flex justify-center">
-            <div className="w-28 sm:w-40 h-28 sm:h-40 bg-linear-to-br from-amber-400/10 via-amber-500/5 to-amber-600/10 rounded-full animate-pulse" />
+            <div className="w-28 sm:w-40 h-28 sm:h-40 bg-linear-to-br from-amber-400/10 via-amber-500/5 to-amber-600/10 rounded-full animate-pulse-slow" />
           </div>
           <img
             src="https://fenifisc.com/wp-content/uploads/2024/12/FENIFISC-OFICIAL.webp"
             alt="FENIFISC Logo"
-            className="relative w-28 sm:w-36 h-28 sm:h-36 rounded-full border-2 sm:border-3 border-amber-500/40 p-1.5 sm:p-2 bg-gray-900/80 object-contain logo-glow"
+            className="relative w-28 sm:w-36 h-28 sm:h-36 rounded-full border-2 sm:border-3 border-amber-500/40 p-1.5 sm:p-2 bg-gray-900/80 object-contain animate-logo-glow"
             loading="lazy"
             decoding="async"
             width="112"
