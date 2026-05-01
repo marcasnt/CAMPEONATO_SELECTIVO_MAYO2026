@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import {
   User,
   Dumbbell,
@@ -16,6 +16,65 @@ import {
   Scale,
   Ruler
 } from "lucide-react";
+
+const style = document.createElement("style");
+style.textContent = `
+  @keyframes float-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(245, 222, 179, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(245, 222, 179, 0.6); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes slide-up-fade {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in-scale {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  @keyframes glow-pulse {
+    0%, 100% { border-color: rgba(245, 222, 179, 0.3); }
+    50% { border-color: rgba(245, 222, 179, 0.8); }
+  }
+  .animate-float-glow { animation: float-glow 3s ease-in-out infinite; }
+  .animate-shimmer { background: linear-gradient(90deg, transparent 0%, rgba(245,222,179,0.1) 50%, transparent 100%); background-size: 200% 100%; animation: shimmer 2s linear infinite; }
+  .animate-pulse-ring { animation: pulse-ring 2s ease-in-out infinite; }
+  .animate-slide-up { animation: slide-up-fade 0.5s ease-out forwards; }
+  .animate-fade-scale { animation: fade-in-scale 0.4s ease-out forwards; }
+  .animate-bounce-subtle { animation: bounce-subtle 2s ease-in-out infinite; }
+  .input-focus-glow:focus { box-shadow: 0 0 0 3px rgba(245, 222, 179, 0.3), 0 0 20px rgba(245, 222, 179, 0.1); }
+  .btn-hover-glow:hover { box-shadow: 0 0 30px rgba(245, 222, 179, 0.4); transform: translateY(-2px); }
+  .btn-hover-scale:hover { transform: scale(1.02); }
+  .checkbox-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .step-entrance { animation: slide-up-fade 0.6s ease-out forwards; opacity: 0; }
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+  .progress-line-glow { background: linear-gradient(90deg, transparent, #f5deb3, transparent); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+  .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+  @keyframes rotate-glow {
+    0% { filter: drop-shadow(0 0 5px rgba(245,222,179,0.5)); }
+    50% { filter: drop-shadow(0 0 20px rgba(245,222,179,0.8)); }
+    100% { filter: drop-shadow(0 0 5px rgba(245,222,179,0.5)); }
+  }
+  .logo-glow { animation: rotate-glow 4s ease-in-out infinite; }
+`;
+document.head.appendChild(style);
 
 // ============================================================
 // CONFIGURATION & CONSTANTS
@@ -104,7 +163,7 @@ const fileToBase64 = (file: File): Promise<string> => {
 // ============================================================
 
 const InputField = ({ label, icon: Icon, value, onChange, error, placeholder, type = "text", required = false }: any) => (
-  <div className="mb-4">
+  <div className="mb-4 animate-slide-up">
     <label className="block text-gray-300 text-sm font-semibold mb-2 flex items-center gap-2">
       {Icon && <Icon className="w-4 h-4 text-amber-500 shrink-0" />}
       {label} {required && <span className="text-amber-500">*</span>}
@@ -115,42 +174,42 @@ const InputField = ({ label, icon: Icon, value, onChange, error, placeholder, ty
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`w-full bg-gray-900/50 border rounded-xl px-4 py-3 text-white placeholder-gray-500 transition-all focus:ring-2 focus:ring-amber-500 outline-none text-base sm:text-sm ${error ? "border-red-500" : "border-gray-700 hover:border-gray-600"
+        className={`w-full bg-gray-900/50 border rounded-xl px-4 py-3 text-white placeholder-gray-500 transition-all focus:ring-2 focus:ring-amber-500 outline-none text-base sm:text-sm input-focus-glow ${error ? "border-red-500 animate-pulse-ring" : "border-gray-700 hover:border-amber-500/50"
           }`}
       />
     </div>
-    {error && <p className="text-red-400 text-xs mt-1 animate-pulse">{error}</p>}
+    {error && <p className="text-red-400 text-xs mt-1 animate-slide-up">{error}</p>}
   </div>
 );
 
 const PhotoUploader = ({ label, description, photo, onFileChange, onRemove, error, aspect = "square" }: any) => {
   const inputRef = useRef<HTMLInputElement>(null);
   return (
-    <div className="mb-6">
+    <div className="mb-6 animate-slide-up">
       <label className="block text-gray-200 text-sm font-bold mb-1">{label}</label>
       <p className="text-gray-500 text-xs mb-3">{description}</p>
 
       {photo.preview ? (
-        <div className="relative group">
-          <div className={`overflow-hidden rounded-2xl border-2 border-amber-500/50 bg-black ${aspect === 'square' ? 'w-32 sm:w-40 h-32 sm:h-40' : 'w-full h-40 sm:h-48'}`}>
+        <div className="relative group animate-fade-scale">
+          <div className={`overflow-hidden rounded-2xl border-2 border-amber-500/50 bg-black animate-float-glow ${aspect === 'square' ? 'w-32 sm:w-40 h-32 sm:h-40' : 'w-full h-40 sm:h-48'}`}>
             <img src={photo.preview} alt="Preview" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
-              <button onClick={onRemove} className="p-2 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors">
+            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-4">
+              <button onClick={onRemove} className="p-2 bg-red-500 rounded-full text-white hover:bg-red-600 hover:scale-110 transition-all duration-200">
                 <Trash2 className="w-5 h-5" />
               </button>
             </div>
           </div>
-          <div className="mt-2 text-green-400 text-xs flex items-center gap-1">
+          <div className="mt-2 text-green-400 text-xs flex items-center gap-1 animate-bounce-subtle">
             <CheckCircle className="w-3 h-3 shrink-0" /> Imagen cargada correctamente
           </div>
         </div>
       ) : (
         <div
           onClick={() => inputRef.current?.click()}
-          className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition-all hover:bg-amber-500/5 ${error ? "border-red-500 bg-red-500/5" : "border-gray-700 hover:border-amber-500/50"
+          className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition-all duration-300 hover:bg-amber-500/10 hover:scale-[1.02] card-hover ${error ? "border-red-500 bg-red-500/5" : "border-gray-700 hover:border-amber-500/50"
             }`}
         >
-          <Upload className={`w-8 sm:w-10 h-8 sm:h-10 mx-auto mb-3 ${error ? 'text-red-400' : 'text-gray-500'}`} />
+          <Upload className={`w-8 sm:w-10 h-8 sm:h-10 mx-auto mb-3 transition-transform duration-300 hover:scale-110 ${error ? 'text-red-400' : 'text-gray-500'}`} />
           <p className="text-gray-300 font-medium text-sm sm:text-base">Subir Imagen</p>
           <p className="text-gray-500 text-xs mt-1">Click para seleccionar (Max 5MB)</p>
         </div>
@@ -165,7 +224,7 @@ const PhotoUploader = ({ label, description, photo, onFileChange, onRemove, erro
           if (file) onFileChange(file);
         }}
       />
-      {error && <p className="text-red-400 text-xs mt-2">{error}</p>}
+      {error && <p className="text-red-400 text-xs mt-2 animate-slide-up">{error}</p>}
     </div>
   );
 };
@@ -316,16 +375,16 @@ export default function App() {
             width="80"
             height="80"
           />
-          <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-500/20 absolute -right-10 -top-10">
+          <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-500/20 absolute -right-10 -top-10 animate-bounce-subtle">
             <CheckCircle className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-3xl font-bold text-white mb-2">¡Inscripción Exitosa!</h2>
-          <p className="text-gray-400 mb-8">
+          <h2 className="text-3xl font-bold text-white mb-2 animate-slide-up stagger-1">¡Inscripción Exitosa!</h2>
+          <p className="text-gray-400 mb-8 animate-slide-up stagger-2">
             Tu registro para el Campeonato Nacional Selectivo de Fisicoculturismo 2026 ha sido procesado. Te esperamos el sábado 23 de mayo a las 5:00 PM.
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-4 rounded-2xl transition-all"
+            className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-4 rounded-2xl transition-all btn-hover-glow animate-slide-up stagger-3"
           >
             Finalizar
           </button>
@@ -371,14 +430,14 @@ export default function App() {
           </div>
         </div>
 
-        <div className="relative inline-flex justify-center w-full mb-6 sm:mb-8">
+        <div className="relative inline-flex justify-center w-full mb-6 sm:mb-8 animate-fade-scale">
           <div className="absolute inset-0 flex justify-center">
-            <div className="w-28 sm:w-40 h-28 sm:h-40 bg-linear-to-br from-amber-400/10 via-amber-500/5 to-amber-600/10 rounded-full" />
+            <div className="w-28 sm:w-40 h-28 sm:h-40 bg-linear-to-br from-amber-400/10 via-amber-500/5 to-amber-600/10 rounded-full animate-pulse" />
           </div>
           <img
             src="https://fenifisc.com/wp-content/uploads/2024/12/FENIFISC-OFICIAL.webp"
             alt="FENIFISC Logo"
-            className="relative w-28 sm:w-36 h-28 sm:h-36 rounded-full border-2 sm:border-3 border-amber-500/40 p-1.5 sm:p-2 bg-gray-900/80 object-contain"
+            className="relative w-28 sm:w-36 h-28 sm:h-36 rounded-full border-2 sm:border-3 border-amber-500/40 p-1.5 sm:p-2 bg-gray-900/80 object-contain logo-glow"
             loading="lazy"
             decoding="async"
             width="112"
@@ -386,11 +445,11 @@ export default function App() {
           />
         </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
-          <span className="text-[#F5DEB3]">CAMPEONATO NACIONAL</span>
+          <span className="text-[#F5DEB3] animate-slide-up stagger-1">CAMPEONATO NACIONAL</span>
           <br className="sm:hidden" />
-          <span className="text-amber-500 block mt-1 sm:mt-0">SELECTIVO FISICO CULTURISMO</span>
-          <span className="block mt-1 text-amber-400">2026</span>
-          <span className="block mt-1 text-amber-300/80 text-lg sm:text-xl md:text-2xl">MANAGUA 2026</span>
+          <span className="text-amber-500 block mt-1 sm:mt-0 animate-slide-up stagger-2">SELECTIVO FISICO CULTURISMO</span>
+          <span className="block mt-1 text-amber-400 animate-slide-up stagger-3">2026</span>
+          <span className="block mt-1 text-amber-300/80 text-lg sm:text-xl md:text-2xl animate-slide-up stagger-4">MANAGUA 2026</span>
         </h1>
 
       </header>
@@ -398,18 +457,18 @@ export default function App() {
       {/* Main Content */}
       <main className="relative max-w-4xl mx-auto px-4 pb-20">
 
-        {/* Progress Bar - Responsive */}
-        <div className="mb-8 sm:mb-10 overflow-x-auto">
-          <div className="min-w-[600px] flex justify-between items-center bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-gray-800">
+        {/* Progress Bar - Responsive with animations */}
+        <div className="mb-8 sm:mb-10 overflow-x-auto animate-slide-up stagger-3">
+          <div className="min-w-[600px] flex justify-between items-center bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-gray-800 animate-shimmer">
             {PASOS.map((p, i) => (
-              <div key={i} className="flex flex-col items-center flex-1 relative px-1">
-                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 ${i <= step ? "bg-amber-500 text-black shadow-lg shadow-amber-500/30" : "bg-gray-800 text-gray-500"
+              <div key={i} className="flex flex-col items-center flex-1 relative px-1 group">
+                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 ${i <= step ? "bg-amber-500 text-black shadow-lg shadow-amber-500/30" : "bg-gray-800 text-gray-500 group-hover:bg-gray-700"
                   }`}>
                   {i < step ? <CheckCircle className="w-4 h-4 sm:w-6 sm:h-6" /> : p.icon}
                 </div>
-                <span className={`text-[8px] sm:text-[10px] mt-2 font-bold uppercase tracking-wider ${i <= step ? "text-amber-500" : "text-gray-600"}`}>{p.title}</span>
+                <span className={`text-[8px] sm:text-[10px] mt-2 font-bold uppercase tracking-wider transition-colors duration-300 ${i <= step ? "text-amber-500" : "text-gray-600 group-hover:text-gray-400"}`}>{p.title}</span>
                 {i < PASOS.length - 1 && (
-                  <div className={`absolute top-4 sm:top-5 left-[55%] sm:left-[60%] w-[70%] sm:w-[80%] h-[2px] -z-10 transition-colors duration-300 ${i < step ? "bg-amber-500" : "bg-gray-800"
+                  <div className={`absolute top-4 sm:top-5 left-[55%] sm:left-[60%] w-[70%] sm:w-[80%] h-[2px] -z-10 transition-all duration-500 ${i < step ? "bg-amber-500 progress-line-glow" : "bg-gray-800"
                     }`} />
                 )}
               </div>
@@ -750,24 +809,24 @@ export default function App() {
             </div>
           )}
 
-          {/* Navigation Buttons - Responsive with more padding */}
+          {/* Navigation Buttons - With animations and hover effects */}
           <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-gray-800 flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
             {step > 0 && (
               <button
                 onClick={handleBack}
                 disabled={loading}
-                className="flex-1 sm:max-w-[180px] px-6 py-4 sm:px-8 sm:py-5 rounded-xl sm:rounded-2xl border border-gray-700 font-bold hover:bg-gray-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 text-base sm:text-lg"
+                className="flex-1 sm:max-w-[180px] px-6 py-4 sm:px-8 sm:py-5 rounded-xl sm:rounded-2xl border border-gray-700 font-bold hover:bg-gray-800 hover:border-amber-500/50 transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 text-base sm:text-lg btn-hover-scale"
               >
-                <ChevronLeft className="w-5 sm:w-6 h-5 sm:h-6" /> <span>Atrás</span>
+                <ChevronLeft className="w-5 sm:w-6 h-5 sm:h-6 transition-transform hover:-translate-x-1" /> <span>Atrás</span>
               </button>
             )}
 
             {step < PASOS.length - 1 ? (
               <button
                 onClick={handleNext}
-                className="flex-1 px-8 py-4 sm:px-10 sm:py-5 rounded-xl sm:rounded-2xl bg-amber-500 text-black font-bold hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-3 ml-auto sm:max-w-[300px] text-base sm:text-lg"
+                className="flex-1 px-8 py-4 sm:px-10 sm:py-5 rounded-xl sm:rounded-2xl bg-amber-500 text-black font-bold hover:bg-amber-400 transition-all duration-300 shadow-lg shadow-amber-500/20 flex items-center justify-center gap-3 ml-auto sm:max-w-[300px] text-base sm:text-lg btn-hover-glow btn-hover-scale"
               >
-                Siguiente <ChevronRight className="w-5 sm:w-6 h-5 sm:h-6" />
+                Siguiente <ChevronRight className="w-5 sm:w-6 h-5 sm:h-6 transition-transform hover:translate-x-1" />
               </button>
             ) : (
               <button
