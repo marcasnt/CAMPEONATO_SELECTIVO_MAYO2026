@@ -74,7 +74,7 @@ const fileToBase64 = (file: File): Promise<string> => {
 const InputField = ({ label, icon: Icon, value, onChange, error, placeholder, type = "text", required = false }: any) => (
   <div className="mb-4">
     <label className="block text-gray-300 text-sm font-semibold mb-2 flex items-center gap-2">
-      {Icon && <Icon className="w-4 h-4 text-amber-500" />}
+      {Icon && <Icon className="w-4 h-4 text-amber-500 shrink-0" />}
       {label} {required && <span className="text-amber-500">*</span>}
     </label>
     <div className="relative">
@@ -83,7 +83,7 @@ const InputField = ({ label, icon: Icon, value, onChange, error, placeholder, ty
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`w-full bg-gray-900/50 border rounded-xl px-4 py-3 text-white placeholder-gray-500 transition-all focus:ring-2 focus:ring-amber-500 outline-none ${error ? "border-red-500" : "border-gray-700 hover:border-gray-600"
+        className={`w-full bg-gray-900/50 border rounded-xl px-4 py-3 text-white placeholder-gray-500 transition-all focus:ring-2 focus:ring-amber-500 outline-none text-base sm:text-sm ${error ? "border-red-500" : "border-gray-700 hover:border-gray-600"
           }`}
       />
     </div>
@@ -100,7 +100,7 @@ const PhotoUploader = ({ label, description, photo, onFileChange, onRemove, erro
 
       {photo.preview ? (
         <div className="relative group">
-          <div className={`overflow-hidden rounded-2xl border-2 border-amber-500/50 bg-black ${aspect === 'square' ? 'w-40 h-40' : 'w-full h-48'}`}>
+          <div className={`overflow-hidden rounded-2xl border-2 border-amber-500/50 bg-black ${aspect === 'square' ? 'w-32 sm:w-40 h-32 sm:h-40' : 'w-full h-40 sm:h-48'}`}>
             <img src={photo.preview} alt="Preview" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
               <button onClick={onRemove} className="p-2 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors">
@@ -109,17 +109,17 @@ const PhotoUploader = ({ label, description, photo, onFileChange, onRemove, erro
             </div>
           </div>
           <div className="mt-2 text-green-400 text-xs flex items-center gap-1">
-            <CheckCircle className="w-3 h-3" /> Imagen cargada correctamente
+            <CheckCircle className="w-3 h-3 shrink-0" /> Imagen cargada correctamente
           </div>
         </div>
       ) : (
         <div
           onClick={() => inputRef.current?.click()}
-          className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all hover:bg-amber-500/5 ${error ? "border-red-500 bg-red-500/5" : "border-gray-700 hover:border-amber-500/50"
+          className={`border-2 border-dashed rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition-all hover:bg-amber-500/5 ${error ? "border-red-500 bg-red-500/5" : "border-gray-700 hover:border-amber-500/50"
             }`}
         >
-          <Upload className={`w-10 h-10 mx-auto mb-3 ${error ? 'text-red-400' : 'text-gray-500'}`} />
-          <p className="text-gray-300 font-medium">Subir Imagen</p>
+          <Upload className={`w-8 sm:w-10 h-8 sm:h-10 mx-auto mb-3 ${error ? 'text-red-400' : 'text-gray-500'}`} />
+          <p className="text-gray-300 font-medium text-sm sm:text-base">Subir Imagen</p>
           <p className="text-gray-500 text-xs mt-1">Click para seleccionar (Max 5MB)</p>
         </div>
       )}
@@ -324,75 +324,77 @@ export default function App() {
         <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-amber-500/20" />
       </div>
 
-      {/* Header */}
-      <header className="relative pt-12 pb-8 px-4 text-center">
+      {/* Header - Responsive */}
+      <header className="relative pt-8 sm:pt-12 pb-6 sm:pb-8 px-3 sm:px-4 text-center">
         {/* ALERTA FECHA LÍMITE */}
-        <div className="relative max-w-4xl mx-auto mb-6">
-          <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-4 flex items-center gap-4 animate-pulse">
-            <AlertCircle className="w-6 h-6 text-red-500 shrink-0" />
+        <div className="relative max-w-4xl mx-auto mb-4 sm:mb-6">
+          <div className="bg-red-500/10 border border-red-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-start sm:items-center gap-3 sm:gap-4 animate-pulse">
+            <AlertCircle className="w-5 sm:w-6 h-5 sm:h-6 text-red-500 shrink-0 mt-0.5 sm:mt-0" />
             <div className="text-left">
-              <h3 className="text-red-400 font-bold text-sm">⚠️ FECHA LÍMITE DE INSCRIPCIONES</h3>
-              <p className="text-red-300 text-xs mt-1">
+              <h3 className="text-red-400 font-bold text-xs sm:text-sm">FECHA LÍMITE DE INSCRIPCIONES</h3>
+              <p className="text-red-300 text-xs mt-1 leading-relaxed">
                 Las inscripciones cierran el <strong>lunes 18 de mayo de 2026</strong>.
-                Después de esta fecha no se aceptarán más inscripciones.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="relative inline-flex justify-center w-full mb-8">
+        <div className="relative inline-flex justify-center w-full mb-6 sm:mb-8">
           <div className="absolute inset-0 flex justify-center">
-            <div className="w-40 h-40 bg-linear-to-br from-amber-400/10 via-amber-500/5 to-amber-600/10 rounded-full" />
+            <div className="w-28 sm:w-40 h-28 sm:h-40 bg-linear-to-br from-amber-400/10 via-amber-500/5 to-amber-600/10 rounded-full" />
           </div>
           <img
             src="https://fenifisc.com/wp-content/uploads/2024/12/FENIFISC-OFICIAL.webp"
             alt="FENIFISC Logo"
-            className="relative w-36 h-36 rounded-full border-3 border-amber-500/40 p-2 bg-gray-900/80 object-contain"
+            className="relative w-28 sm:w-36 h-28 sm:h-36 rounded-full border-2 sm:border-3 border-amber-500/40 p-1.5 sm:p-2 bg-gray-900/80 object-contain"
             loading="lazy"
             decoding="async"
-            width="144"
-            height="144"
+            width="112"
+            height="112"
           />
         </div>
-        <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2">
-          CAMPEONATO <span className="text-amber-500">NACIONAL SELECTIVO DE FISICO CULTURISMO</span>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
+          <span className="text-amber-500">CAMPEONATO NACIONAL</span>
+          <br className="sm:hidden" />
+          <span className="text-amber-500 block mt-1 sm:mt-0">SELECTIVO FISICO CULTURISMO</span>
+          <span className="block mt-1 text-amber-400">2026</span>
+          <span className="block mt-1 text-amber-300/80 text-lg sm:text-xl md:text-2xl">MANAGUA 2026</span>
         </h1>
-        <p className="text-amber-200/60 font-bold tracking-[0.5em] uppercase text-sm">Managua 2026</p>
-        <p className="text-amber-200/50 italic text-sm mb-1">La Federación Nicaragüense de Fisicoculturismo (FENIFISC), El Instituto Nicaragüense de Deportes (IND) y la Asociación Departamental de Managua invitan a todos los clubes, atletas y miembros debidamente afiliados a participar.</p>
 
       </header>
 
       {/* Main Content */}
       <main className="relative max-w-4xl mx-auto px-4 pb-20">
 
-        {/* Progress Bar - Simplificado para Safari */}
-        <div className="mb-10 flex justify-between items-center bg-gray-900/50 p-4 rounded-2xl border border-gray-800">
-          {PASOS.map((p, i) => (
-            <div key={i} className="flex flex-col items-center flex-1 relative">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${i <= step ? "bg-amber-500 text-black" : "bg-gray-800 text-gray-500"
-                }`}>
-                {i < step ? <CheckCircle className="w-6 h-6" /> : p.icon}
+        {/* Progress Bar - Responsive */}
+        <div className="mb-8 sm:mb-10 overflow-x-auto">
+          <div className="min-w-[600px] flex justify-between items-center bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-gray-800">
+            {PASOS.map((p, i) => (
+              <div key={i} className="flex flex-col items-center flex-1 relative px-1">
+                <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 ${i <= step ? "bg-amber-500 text-black shadow-lg shadow-amber-500/30" : "bg-gray-800 text-gray-500"
+                  }`}>
+                  {i < step ? <CheckCircle className="w-4 h-4 sm:w-6 sm:h-6" /> : p.icon}
+                </div>
+                <span className={`text-[8px] sm:text-[10px] mt-2 font-bold uppercase tracking-wider ${i <= step ? "text-amber-500" : "text-gray-600"}`}>{p.title}</span>
+                {i < PASOS.length - 1 && (
+                  <div className={`absolute top-4 sm:top-5 left-[55%] sm:left-[60%] w-[70%] sm:w-[80%] h-[2px] -z-10 transition-colors duration-300 ${i < step ? "bg-amber-500" : "bg-gray-800"
+                    }`} />
+                )}
               </div>
-              <span className={`text-[10px] mt-2 font-bold uppercase tracking-wider hidden md:block ${i <= step ? "text-amber-500" : "text-gray-600"
-                }`}>{p.title}</span>
-              {i < PASOS.length - 1 && (
-                <div className={`absolute top-5 left-[60%] w-[80%] h-[2px] -z-10 ${i < step ? "bg-amber-500" : "bg-gray-800"
-                  }`} />
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* Step Container - Simplificado para Safari */}
-        <div className="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 md:p-10">
+        {/* Step Container - Responsive */}
+        <div className="bg-gray-900/80 border border-gray-800 rounded-2xl p-4 sm:p-6 md:p-10">
 
           {/* STEP 0: PERSONAL */}
           {step === 0 && (
             <div>
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-bold mb-6 flex items-center gap-2">
                 <User className="text-amber-500" /> Información Personal
               </h2>
-              <div className="grid md:grid-cols-2 gap-x-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 sm:gap-x-6">
                 <InputField
                   label="Nombre Completo"
                   required
@@ -497,7 +499,7 @@ export default function App() {
                 </button>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-x-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 sm:gap-x-6">
                 {!form.atletaLibre && (
                   <>
                     <InputField
@@ -709,45 +711,45 @@ export default function App() {
             </div>
           )}
 
-          {/* Navigation Buttons */}
-          <div className="mt-10 pt-8 border-t border-gray-800 flex justify-between gap-4">
+          {/* Navigation Buttons - Responsive */}
+          <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-gray-800 flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
             {step > 0 && (
               <button
                 onClick={handleBack}
                 disabled={loading}
-                className="flex-1 max-w-[200px] py-4 rounded-2xl border border-gray-700 font-bold hover:bg-gray-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex-1 sm:max-w-[180px] py-3 sm:py-4 rounded-xl sm:rounded-2xl border border-gray-700 font-bold hover:bg-gray-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-sm sm:text-base"
               >
-                <ChevronLeft className="w-5 h-5" /> Atrás
+                <ChevronLeft className="w-4 sm:w-5 h-4 sm:h-5" /> <span className="hidden sm:inline">Atrás</span><span className="sm:hidden">Atrás</span>
               </button>
             )}
 
             {step < PASOS.length - 1 ? (
               <button
                 onClick={handleNext}
-                className="flex-1 py-4 rounded-2xl bg-amber-500 text-black font-bold hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 ml-auto max-w-[300px]"
+                className="flex-1 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-amber-500 text-black font-bold hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 ml-auto sm:max-w-[280px] text-sm sm:text-base"
               >
-                Siguiente <ChevronRight className="w-5 h-5" />
+                Siguiente <ChevronRight className="w-4 sm:w-5 h-4 sm:h-5" />
               </button>
             ) : (
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="flex-1 py-4 rounded-2xl bg-gradient-to-r from-amber-600 to-amber-500 text-black font-bold hover:from-amber-500 hover:to-amber-400 transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 ml-auto max-w-[300px] disabled:opacity-50"
+                className="flex-1 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-600 to-amber-500 text-black font-bold hover:from-amber-500 hover:to-amber-400 transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 ml-auto sm:max-w-[280px] text-sm sm:text-base disabled:opacity-50"
               >
                 {loading ? (
-                  <div className="w-6 h-6 border-4 border-black border-t-transparent rounded-full animate-spin" />
+                  <div className="w-5 sm:w-6 h-5 sm:h-6 border-3 sm:border-4 border-black border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <>Finalizar Inscripción <CheckCircle className="w-5 h-5" /></>
+                  <>Finalizar <span className="hidden sm:inline">Inscripción</span> <CheckCircle className="w-4 sm:w-5 h-4 sm:h-5" /></>
                 )}
               </button>
             )}
           </div>
         </div>
 
-        {/* Footer Info */}
-        <footer className="mt-12 text-center text-gray-600 text-xs">
-          <p className="mb-2">Federación Nicaragüense de Fisicoculturismo (FENIFISC) • Instituto Nicaragüense de Deportes (IND) • Asociación Departamental de Managua 2026</p>
-          <p>© Todos los derechos reservados</p>
+        {/* Footer Info - Responsive */}
+        <footer className="mt-8 sm:mt-12 text-center text-gray-600 text-xs px-4">
+          <p className="mb-2 leading-relaxed">Federación Nicaragüense de Fisicoculturismo (FENIFISC) • IND • Asociación Departamental de Managua</p>
+          <p>© 2026 Todos los derechos reservados</p>
         </footer>
       </main>
     </div>
