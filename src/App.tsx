@@ -55,6 +55,38 @@ const PASOS = [
 // UTILITIES - OPTIMIZADAS
 // ============================================================
 
+const compressImage = (file: File, maxWidth = 800, quality = 0.7): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        const base64 = canvas.toDataURL("image/jpeg", quality);
+        resolve(base64.split(",")[1]);
+      };
+      img.onerror = reject;
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
+
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -173,15 +205,15 @@ export default function App() {
   }, [errors]);
 
   const handlePhoto = useCallback(async (name: string, file: File) => {
-    if (file.size > 5 * 1024 * 1024) {
-      setErrors((prev: any) => ({ ...prev, [name]: "El archivo es demasiado grande (Máx 5MB)" }));
+    if (file.size > 10 * 1024 * 1024) {
+      setErrors((prev: any) => ({ ...prev, [name]: "El archivo es demasiado grande (Máx 10MB)" }));
       return;
     }
-    const base64 = await fileToBase64(file);
+    const compressedBase64 = await compressImage(file, 800, 0.7);
     const preview = URL.createObjectURL(file);
     setPhotos((prev: any) => ({
       ...prev,
-      [name]: { file, preview, base64 }
+      [name]: { file, preview, base64: compressedBase64 }
     }));
     setErrors((prev: any) => {
       const next = { ...prev };
@@ -354,7 +386,7 @@ export default function App() {
           />
         </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">
-          <span className="text-amber-500">CAMPEONATO NACIONAL</span>
+          <span className="text-[#F5DEB3]">CAMPEONATO NACIONAL</span>
           <br className="sm:hidden" />
           <span className="text-amber-500 block mt-1 sm:mt-0">SELECTIVO FISICO CULTURISMO</span>
           <span className="block mt-1 text-amber-400">2026</span>
@@ -685,6 +717,7 @@ export default function App() {
               </div>
 
               <div className="space-y-4">
+                <p className="text-amber-500 text-sm font-semibold mb-3">Debe marcar los tres para continuar:</p>
                 {[
                   { id: "aceptaReglamento", text: "Acepto el reglamento oficial de la IFBB y FENIFISC." },
                   { id: "aceptaHorario", text: "Confirmo que el pesaje es de 12:00 MD a 3:00 PM en el Polideportivo España y el evento inicia a las 5:00 PM. Seré puntual, de lo contrario seré penalizado." },
@@ -692,12 +725,15 @@ export default function App() {
                 ].map((item) => (
                   <label
                     key={item.id}
-                    className={`flex items-start gap-4 p-4 rounded-2xl border cursor-pointer transition-all ${(form as any)[item.id] ? "bg-amber-500/10 border-amber-500" : "bg-gray-900/50 border-gray-700"
+                    className={`flex items-start gap-4 p-4 rounded-2xl border cursor-pointer transition-all ${(form as any)[item.id] ? "bg-green-500/10 border-green-500" : "bg-gray-900/50 border-gray-700 hover:border-gray-600"
                       }`}
                   >
+                    <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${(form as any)[item.id] ? "bg-green-500 border-green-500" : "border-gray-500"}`}>
+                      {(form as any)[item.id] && <CheckCircle className="w-4 h-4 text-white" />}
+                    </div>
                     <input
                       type="checkbox"
-                      className="mt-1 accent-amber-500"
+                      className="sr-only"
                       checked={(form as any)[item.id]}
                       onChange={(e) => updateField(item.id, e.target.checked)}
                     />
@@ -706,40 +742,43 @@ export default function App() {
                 ))}
               </div>
               {(errors.aceptaReglamento || errors.aceptaHorario || errors.autorizaDatos) && (
-                <p className="text-red-400 text-xs mt-2">Debe aceptar los tres términos para finalizar la inscripción.</p>
+                <p className="text-red-400 text-sm mt-3 font-semibold flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  Debe aceptar los tres términos para finalizar la inscripción
+                </p>
               )}
             </div>
           )}
 
-          {/* Navigation Buttons - Responsive */}
+          {/* Navigation Buttons - Responsive with more padding */}
           <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-gray-800 flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
             {step > 0 && (
               <button
                 onClick={handleBack}
                 disabled={loading}
-                className="flex-1 sm:max-w-[180px] py-3 sm:py-4 rounded-xl sm:rounded-2xl border border-gray-700 font-bold hover:bg-gray-800 transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-sm sm:text-base"
+                className="flex-1 sm:max-w-[180px] px-6 py-4 sm:px-8 sm:py-5 rounded-xl sm:rounded-2xl border border-gray-700 font-bold hover:bg-gray-800 transition-all flex items-center justify-center gap-3 disabled:opacity-50 text-base sm:text-lg"
               >
-                <ChevronLeft className="w-4 sm:w-5 h-4 sm:h-5" /> <span className="hidden sm:inline">Atrás</span><span className="sm:hidden">Atrás</span>
+                <ChevronLeft className="w-5 sm:w-6 h-5 sm:h-6" /> <span>Atrás</span>
               </button>
             )}
 
             {step < PASOS.length - 1 ? (
               <button
                 onClick={handleNext}
-                className="flex-1 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-amber-500 text-black font-bold hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 ml-auto sm:max-w-[280px] text-sm sm:text-base"
+                className="flex-1 px-8 py-4 sm:px-10 sm:py-5 rounded-xl sm:rounded-2xl bg-amber-500 text-black font-bold hover:bg-amber-400 transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-3 ml-auto sm:max-w-[300px] text-base sm:text-lg"
               >
-                Siguiente <ChevronRight className="w-4 sm:w-5 h-4 sm:h-5" />
+                Siguiente <ChevronRight className="w-5 sm:w-6 h-5 sm:h-6" />
               </button>
             ) : (
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="flex-1 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-600 to-amber-500 text-black font-bold hover:from-amber-500 hover:to-amber-400 transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2 ml-auto sm:max-w-[280px] text-sm sm:text-base disabled:opacity-50"
+                className="flex-1 px-8 py-4 sm:px-10 sm:py-5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-600 to-amber-500 text-black font-bold hover:from-amber-500 hover:to-amber-400 transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-3 ml-auto sm:max-w-[300px] text-base sm:text-lg disabled:opacity-50"
               >
                 {loading ? (
-                  <div className="w-5 sm:w-6 h-5 sm:h-6 border-3 sm:border-4 border-black border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 sm:w-7 h-6 sm:h-7 border-4 border-black border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <>Finalizar <span className="hidden sm:inline">Inscripción</span> <CheckCircle className="w-4 sm:w-5 h-4 sm:h-5" /></>
+                  <>Finalizar Inscripción <CheckCircle className="w-5 sm:w-6 h-5 sm:h-6" /></>
                 )}
               </button>
             )}
