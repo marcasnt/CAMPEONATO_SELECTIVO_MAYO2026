@@ -61,13 +61,14 @@ style.textContent = `
     50% { transform: scale(1.05); }
   }
   .animate-float-glow { animation: float-glow 4s ease-in-out infinite; }
-  .animate-shimmer { background: linear-gradient(90deg, transparent 0%, rgba(245,222,179,0.1) 50%, transparent 100%); background-size: 200% 100%; animation: shimmer-slow 4s linear infinite; }
+  .animate-shimmer { display: none; }
   .animate-pulse-ring { animation: pulse-ring 3s ease-in-out infinite; }
   .animate-slide-up { animation: slide-up-fade 0.5s ease-out forwards; }
   .animate-fade-scale { animation: fade-in-scale 0.4s ease-out forwards; }
   .animate-bounce-subtle { animation: bounce-subtle 3s ease-in-out infinite; }
-  .animate-logo-glow { animation: logo-glow-slow 6s ease-in-out infinite; }
+  .logo-static-glow { filter: drop-shadow(0 0 12px rgba(245,222,179,0.5)); }
   .animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
+  .progress-bar-static { border: 1px solid rgba(245,222,179,0.15); }
   .input-focus-glow:focus { box-shadow: 0 0 0 3px rgba(245, 222, 179, 0.3), 0 0 20px rgba(245, 222, 179, 0.1); }
   .btn-hover-glow:hover { box-shadow: 0 0 30px rgba(245, 222, 179, 0.4); transform: translateY(-2px); }
   .btn-hover-scale:hover { transform: scale(1.02); }
@@ -78,7 +79,7 @@ style.textContent = `
   .stagger-3 { animation-delay: 0.3s; }
   .stagger-4 { animation-delay: 0.4s; }
   .stagger-5 { animation-delay: 0.5s; }
-  .progress-line-glow { background: linear-gradient(90deg, transparent, #f5deb3, transparent); background-size: 200% 100%; animation: shimmer-slow 5s ease-in-out infinite; }
+  .progress-line-static { background: #f5deb3; }
   .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
   .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
 `;
@@ -445,7 +446,7 @@ export default function App() {
           <img
             src="https://fenifisc.com/wp-content/uploads/2024/12/FENIFISC-OFICIAL.webp"
             alt="FENIFISC Logo"
-            className="relative w-28 sm:w-36 h-28 sm:h-36 rounded-full border-2 sm:border-3 border-amber-500/40 p-1.5 sm:p-2 bg-gray-900/80 object-contain animate-logo-glow"
+            className="relative w-28 sm:w-36 h-28 sm:h-36 rounded-full border-2 sm:border-3 border-amber-500/40 p-1.5 sm:p-2 bg-gray-900/80 object-contain logo-static-glow"
             loading="lazy"
             decoding="async"
             width="112"
@@ -467,7 +468,7 @@ export default function App() {
 
         {/* Progress Bar - Responsive with animations */}
         <div className="mb-8 sm:mb-10 overflow-x-auto animate-slide-up stagger-3">
-          <div className="min-w-[600px] flex justify-between items-center bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-gray-800 animate-shimmer">
+          <div className="min-w-[600px] flex justify-between items-center bg-gray-900/50 p-3 sm:p-4 rounded-2xl border border-gray-700 progress-bar-static">
             {PASOS.map((p, i) => (
               <div key={i} className="flex flex-col items-center flex-1 relative px-1 group">
                 <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 ${i <= step ? "bg-amber-500 text-black shadow-lg shadow-amber-500/30" : "bg-gray-800 text-gray-500 group-hover:bg-gray-700"
@@ -476,7 +477,7 @@ export default function App() {
                 </div>
                 <span className={`text-[8px] sm:text-[10px] mt-2 font-bold uppercase tracking-wider transition-colors duration-300 ${i <= step ? "text-amber-500" : "text-gray-600 group-hover:text-gray-400"}`}>{p.title}</span>
                 {i < PASOS.length - 1 && (
-                  <div className={`absolute top-4 sm:top-5 left-[55%] sm:left-[60%] w-[70%] sm:w-[80%] h-[2px] -z-10 transition-all duration-500 ${i < step ? "bg-amber-500 progress-line-glow" : "bg-gray-800"
+                  <div className={`absolute top-4 sm:top-5 left-[55%] sm:left-[60%] w-[70%] sm:w-[80%] h-[2px] -z-10 transition-all duration-500 ${i < step ? "bg-amber-500 progress-line-static" : "bg-gray-800"
                     }`} />
                 )}
               </div>
