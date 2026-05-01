@@ -20,7 +20,7 @@ import {
 // ============================================================
 // CONFIGURATION & CONSTANTS
 // ============================================================
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwu_u9NUOsgkLz75Bonk8HcQpSQDL4O3bbNmZervxys1_tFe5Lb9yDGwIDpBOToiEV3/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6X9fmBVzIKBLb51aQzsA3EARnXrJ7Kq1S8c7hN9MVb4DL7bj62RoPj4Rn16cNf0jFog/exec";
 
 const DEPARTAMENTOS_NI = [
   "Matagalpa", "Jinotega", "Estelí", "Madriz", "Nueva Segovia",
