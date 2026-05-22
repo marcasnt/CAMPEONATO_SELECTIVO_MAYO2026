@@ -376,7 +376,7 @@ export default function App() {
       <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-gray-900 border border-amber-500/30 rounded-3xl p-8 text-center shadow-2xl">
           <img
-            src="https://fenifisc.com/wp-content/uploads/2024/12/FENIFISC-OFICIAL.webp"
+            src="https://fenifisc.com/logo-fenifisc.png"
             alt="FENIFISC"
             className="w-20 h-20 mx-auto mb-6 rounded-full border-2 border-amber-500/40 bg-gray-800 p-1 object-contain"
             loading="lazy"
