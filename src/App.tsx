@@ -444,7 +444,7 @@ export default function App() {
             <div className="w-28 sm:w-40 h-28 sm:h-40 bg-linear-to-br from-amber-400/10 via-amber-500/5 to-amber-600/10 rounded-full animate-pulse-slow" />
           </div>
           <img
-            src="https://fenifisc.com/wp-content/uploads/2024/12/FENIFISC-OFICIAL.webp"
+            src="https://fenifisc.com/logo-fenifisc.png"
             alt="FENIFISC Logo"
             className="relative w-28 sm:w-36 h-28 sm:h-36 rounded-full border-2 sm:border-3 border-amber-500/40 p-1.5 sm:p-2 bg-gray-900/80 object-contain logo-static-glow"
             loading="lazy"
